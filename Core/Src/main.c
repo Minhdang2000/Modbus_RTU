@@ -123,7 +123,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		 uint32_t current_time = HAL_GetTick();
 		 if ((current_time - last_interrupt_time) > 200)
 		 {
-			 a = 1;
+//			 a = 1;
 			 Send_Error_Status();
 			 HAL_GPIO_WritePin(GPIOB, Led_Temp_Pin, GPIO_PIN_SET);
 //			 HAL_GPIO_TogglePin(GPIOB, Led_Temp_Pin);
@@ -474,13 +474,13 @@ void Process_Modbus(void)
 	// Read Temp
 	case 2:
 		Temp = unpack754_32(Data_32);
-		if (a == 1)
-		{
-			sprintf(LCD_Send,"Temp: %.2f oC",Temp );
-			CLCD_SetCursor(&LCD1, 0, 0);
-			CLCD_WriteString(&LCD1, LCD_Send);
-			a = 0;
-		}
+//		if (a == 1)
+//		{
+//			sprintf(LCD_Send,"Temp: %.2f oC",Temp );
+//			CLCD_SetCursor(&LCD1, 0, 0);
+//			CLCD_WriteString(&LCD1, LCD_Send);
+//			a = 0;
+//		}
 		memset(rx_data, 0, sizeof(rx_data));
 		Read_Water();
 		i = 6;
@@ -510,16 +510,14 @@ void Process_Modbus(void)
 	// Read RH
 	case 6:
 		RH =  unpack754_32(Data_32);
-		if (a == 0)
-		{
-			sprintf(LCD_Send,"Water: %.2f ppm",RH );
-			CLCD_SetCursor(&LCD1, 0, 0);
-			CLCD_WriteString(&LCD1, LCD_Send);
-			HAL_Delay(4000);
-			CLCD_Clear(&LCD1);
-			a = 0;
-		}
-//		Send_Error_Status();
+//		if (a == 0)
+//		{
+//			sprintf(LCD_Send,"Water: %.2f ppm",RH );
+//			CLCD_SetCursor(&LCD1, 0, 0);
+//			CLCD_WriteString(&LCD1, LCD_Send);
+//			CLCD_Clear(&LCD1);
+//			a = 0;
+//		}
 		HAL_GPIO_WritePin(GPIOB, Led_Water_Pin|Led_Temp_Pin, GPIO_PIN_RESET);
 		memset(rx_data, 0, sizeof(rx_data));
 		i = 0;
@@ -551,7 +549,6 @@ void StartDefaultTask(void *argument)
 					Data_16[1] = rx_data[5]<<8 | rx_data[6];
 					Data_32 = Data_16[1]<<16 | Data_16[0];
 					Process_Modbus();
-					//HAL_UART_Transmit(&huart2, rx_data, 7, 200);
 					rx_index = 0;
 					rx_length = 0;
 				}
